@@ -1,6 +1,6 @@
 import re
 import requests
-from Response import *
+from yamlToPythonDict import *
 
 base_url = "https://api.telegram.org/bot7172839256:AAFvz2LjdpEdj_MWrBnIws8QQtA6SLWAKKc"
 

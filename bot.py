@@ -1,9 +1,13 @@
 import requests
 import pandas as pd
 
-url = 'https://raw.githubusercontent.com/vikasjha001/telegram/main/qna_chitchat_professional.tsv'
-
-df = pd.read_csv(url, sep="\t")
+# Define responses directly in Python code
+responses = {
+    "hi": "Hello!",
+    "how are you?": "I'm doing well, thank you!",
+    "bye": "Goodbye!",
+    # Add more responses as needed
+}
 
 base_url = "https://api.telegram.org/bot6996212383:AAE64H2alZgbKKYjuCeCL2QzjegnP2U-65g"
 
@@ -24,22 +28,20 @@ def read_msg(offset):
         return data["result"][-1]["update_id"] + 1
 
 def auto_answer(message):
-    answer = df.loc[df['Question'].str.lower() == message.lower()]
-
-    if not answer.empty:
-        answer = answer.iloc[0]['Answer']
-        return answer
+    # Check if the message exists in the responses dictionary
+    if message.lower() in responses:
+        return responses[message.lower()]
     else:
-        return "Sorry, I could not understand you !!! I am still learning and try to get better in answering."
+        return "Sorry, I could not understand you! I am still learning and trying to get better at answering."
 
 def send_msg(message):
-    chat_id = message["message"]["chat"]["id"]  # Extracting chat_id from the incoming message
+    chat_id = message["message"]["chat"]["id"]
     text = message["message"]["text"]
     message_id = message["message"]["message_id"]
     answer = auto_answer(text)
 
     parameters = {
-        "chat_id": chat_id,  # Using the extracted chat_id dynamically
+        "chat_id": chat_id,
         "text": answer,
         "reply_to_message_id": message_id
     }

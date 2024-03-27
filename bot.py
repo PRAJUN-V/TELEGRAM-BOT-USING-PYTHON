@@ -1,37 +1,60 @@
-import Constants as keys
-from telegram.ext import *
+import requests
+import pandas as pd
 
-import Responses as R
+url = 'https://raw.githubusercontent.com/vikasjha001/telegram/main/qna_chitchat_professional.tsv'
 
-print('bot started')
+df = pd.read_csv(url, sep="\t")
 
-def start_command(update, context):
-    update.message.reply_text('Type something random to get started')
 
-def help_command(update, context):
-    update.message.reply_text('If you need help, you should ask for it on Google')
+base_url = "https://api.telegram.org/bot6996212383:AAE64H2alZgbKKYjuCeCL2QzjegnP2U-65g"
 
-def handle_message(update, context):
-    text = str(update.message.text).lower()
-    response = R.sample_responses(text)
 
-    update.message.reply_text(response)
 
-def error(update, context):
-    print(f'Update {update} caused an error: {context.error}')
+def read_msg(offset):
 
-def main():
-    updater = Updater(keys.API_KEY, use_context=True)
-    dp = updater.dispatcher
+  parameters = {
+      "offset" : offset
+  }
 
-    dp.add_handler(CommandHandler('start', start_command))
-    dp.add_handler(CommandHandler('help', help_command))
-    dp.add_handler(MessageHandler(Filters.text, handle_message))  # Fixed the typo here
+  resp = requests.get(base_url + "/getUpdates", data = parameters)
+  data = resp.json()
 
-    dp.add_error_handler(error)
+  print(data)
 
-    updater.start_polling()
-    updater.idle()
+  for result in data["result"]:
+    send_msg(result)
 
-if __name__ == "__main__":
-    main()
+  if data["result"]:
+    return data["result"][-1]["update_id"] + 1
+
+
+
+def auto_answer(message):
+  answer = df.loc[df['Question'].str.lower() == message.lower()]
+
+  if not answer.empty:
+      answer = answer.iloc[0]['Answer']
+      return answer
+  else:
+      return "Sorry, I could not understand you !!! I am still learning and try to get better in answering."
+
+
+
+def send_msg(message):
+  text = message["message"]["text"]
+  message_id = message["message"]["message_id"]
+  answer = auto_answer(text)
+
+  parameters = {
+      "chat_id" : "784076100",
+      "text" : answer,
+      "reply_to_message_id" : message_id
+  }
+
+  resp = requests.get(base_url + "/sendMessage", data = parameters)
+  print(resp.text)
+
+offset = 0
+
+while True:
+  offset = read_msg(offset)

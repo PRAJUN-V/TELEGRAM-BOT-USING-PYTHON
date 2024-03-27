@@ -1,10 +1,14 @@
 import yaml
 import re
+import os
 
-def load_conversations(filename):
-    with open(filename, "r") as file:
-        conversations = yaml.safe_load(file)
-    return conversations
+def load_conversations_from_files(file_list):
+    all_conversations = []
+    for filename in file_list:
+        with open(filename, "r") as file:
+            conversations = yaml.safe_load(file)
+            all_conversations.extend(conversations["conversations"])
+    return all_conversations
 
 def clean_key(key):
     # Remove special characters and extra spaces from the key
@@ -20,8 +24,11 @@ def conversations_to_dict(conversations):
         qa_pairs[cleaned_question] = answer
     return qa_pairs
 
-conversations = load_conversations("computers.yml")
-qa_pairs = conversations_to_dict(conversations["conversations"])
+# List of YAML files
+yaml_files = ["computers.yml", "science.yml", "humor.yml", "ai.yml"]  # Add more filenames as needed
+
+conversations = load_conversations_from_files(yaml_files)
+qa_pairs = conversations_to_dict(conversations)
 
 print(qa_pairs)
 responses = qa_pairs

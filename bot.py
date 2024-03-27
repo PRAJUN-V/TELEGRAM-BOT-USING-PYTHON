@@ -1,3 +1,4 @@
+import re
 import requests
 from Response import *
 
@@ -21,8 +22,10 @@ def read_msg(offset):
 
 def auto_answer(message):
     # Check if the message exists in the responses dictionary
+    message = re.sub(r'[^a-zA-Z\s]', '', message).lower()
+    message = re.sub(r'\s+', ' ', message).strip().lower()
     if message.lower() in responses:
-        return responses[message.lower()]
+        return responses[message]
     else:
         return "Sorry, I could not understand you! I am still learning and trying to get better at answering."
 

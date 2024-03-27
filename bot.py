@@ -1,13 +1,5 @@
 import requests
-import pandas as pd
-
-# Define responses directly in Python code
-responses = {
-    "hi": "Hello!",
-    "how are you?": "I'm doing well, thank you!",
-    "bye": "Goodbye!",
-    # Add more responses as needed
-}
+from Response import *
 
 base_url = "https://api.telegram.org/bot6996212383:AAE64H2alZgbKKYjuCeCL2QzjegnP2U-65g"
 

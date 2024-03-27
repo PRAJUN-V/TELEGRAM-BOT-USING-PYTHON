@@ -1,7 +1,7 @@
 import requests
 from Response import *
 
-base_url = "https://api.telegram.org/bot6996212383:AAE64H2alZgbKKYjuCeCL2QzjegnP2U-65g"
+base_url = "https://api.telegram.org/bot7172839256:AAFvz2LjdpEdj_MWrBnIws8QQtA6SLWAKKc"
 
 def read_msg(offset):
     parameters = {

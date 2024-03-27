@@ -11,7 +11,7 @@ def read_msg(offset):
     resp = requests.get(base_url + "/getUpdates", data=parameters)
     data = resp.json()
 
-    print(data)
+    # print(data)
 
     for result in data["result"]:
         send_msg(result)

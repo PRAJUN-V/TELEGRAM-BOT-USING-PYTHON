@@ -5,56 +5,49 @@ url = 'https://raw.githubusercontent.com/vikasjha001/telegram/main/qna_chitchat_
 
 df = pd.read_csv(url, sep="\t")
 
-
 base_url = "https://api.telegram.org/bot6996212383:AAE64H2alZgbKKYjuCeCL2QzjegnP2U-65g"
 
-
-
 def read_msg(offset):
+    parameters = {
+        "offset": offset
+    }
 
-  parameters = {
-      "offset" : offset
-  }
+    resp = requests.get(base_url + "/getUpdates", data=parameters)
+    data = resp.json()
 
-  resp = requests.get(base_url + "/getUpdates", data = parameters)
-  data = resp.json()
+    print(data)
 
-  print(data)
+    for result in data["result"]:
+        send_msg(result)
 
-  for result in data["result"]:
-    send_msg(result)
-
-  if data["result"]:
-    return data["result"][-1]["update_id"] + 1
-
-
+    if data["result"]:
+        return data["result"][-1]["update_id"] + 1
 
 def auto_answer(message):
-  answer = df.loc[df['Question'].str.lower() == message.lower()]
+    answer = df.loc[df['Question'].str.lower() == message.lower()]
 
-  if not answer.empty:
-      answer = answer.iloc[0]['Answer']
-      return answer
-  else:
-      return "Sorry, I could not understand you !!! I am still learning and try to get better in answering."
-
-
+    if not answer.empty:
+        answer = answer.iloc[0]['Answer']
+        return answer
+    else:
+        return "Sorry, I could not understand you !!! I am still learning and try to get better in answering."
 
 def send_msg(message):
-  text = message["message"]["text"]
-  message_id = message["message"]["message_id"]
-  answer = auto_answer(text)
+    chat_id = message["message"]["chat"]["id"]  # Extracting chat_id from the incoming message
+    text = message["message"]["text"]
+    message_id = message["message"]["message_id"]
+    answer = auto_answer(text)
 
-  parameters = {
-      "chat_id" : "784076100",
-      "text" : answer,
-      "reply_to_message_id" : message_id
-  }
+    parameters = {
+        "chat_id": chat_id,  # Using the extracted chat_id dynamically
+        "text": answer,
+        "reply_to_message_id": message_id
+    }
 
-  resp = requests.get(base_url + "/sendMessage", data = parameters)
-  print(resp.text)
+    resp = requests.get(base_url + "/sendMessage", data=parameters)
+    print(resp.text)
 
 offset = 0
 
 while True:
-  offset = read_msg(offset)
+    offset = read_msg(offset)

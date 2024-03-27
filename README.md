@@ -1,6 +1,5 @@
 Telegram bot using python
 
-
 nohup python3 bot.py &
 run this code in aws then your python file will run even if 
 your aws is closed
@@ -13,3 +12,4 @@ kill {number}
 
 ps aux | grep bot.py
 this code will also give you that 5 digit {number}
+

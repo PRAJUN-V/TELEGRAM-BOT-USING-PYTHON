@@ -1,8 +1,14 @@
 import re
 import requests
-from Response import *
+import yaml
 
 base_url = "https://api.telegram.org/bot7172839256:AAFvz2LjdpEdj_MWrBnIws8QQtA6SLWAKKc"
+
+def read_responses():
+    with open("science.yaml", "r") as file:
+        return yaml.safe_load(file)
+
+responses = read_responses()
 
 def read_msg(offset):
     parameters = {
